@@ -1,7 +1,7 @@
 Algorithm for processing DayOne markdown export:
 
 - open file
-- readlines untile next "Date" entry
+- readlines until next "Date" entry
 - transform meta lines into front matter
 - grab content
 - extract post title from content (first sentence)
