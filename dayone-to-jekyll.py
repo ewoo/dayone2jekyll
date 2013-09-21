@@ -23,6 +23,7 @@ def main():
       if count > 1:
         # Flush.
         e = Entry(entry)
+        e.save(home)
         #e.print_headers()
 
         # Reset.
@@ -72,7 +73,7 @@ class Entry:
 
       if date_header.search(line):
         self.create_date = parser.parse(line.replace("date:",""))
-        line = "date: %s" % self.create_date.strftime("%Y-%m-%d %H:%M:%S")
+        line = "date: %s\n" % self.create_date.strftime("%Y-%m-%d %H:%M:%S")
 
       cleaned_headers.append(line)
 
@@ -89,10 +90,9 @@ class Entry:
         self.short_title = self.__smart_truncate(self.title)
         break
 
-    print "------------"
-    print self.create_date
-    print self.title
-    print self.short_title
+    title_header = "title: \"" + self.short_title + "\"\n"
+    self.headers.insert(0, title_header)
+    self.headers.insert(0, "layout: post\n")
 
   def __build_filename(self):
 
@@ -114,12 +114,13 @@ class Entry:
     # Massage headers. Remove beginning tabs and make lower case.
     #    for line in self.headers:
 
-  def save(self, path):
-    fw = open(os.path.join(path, self.file_name), "w")
+  def save(self, savepath):
+    fullpath = os.path.join(savepath, self.file_name)
+    fw = open(fullpath, "w")
     # Write headers in Front Matter format.
-    fw.writeline("---")
+    fw.write("---\n")
     fw.writelines(self.headers)
-    fw.writeline("---")
+    fw.write("---\n")
     # Wrtie blog post content.
     fw.writelines(self.content)
     fw.close()
