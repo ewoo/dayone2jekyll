@@ -5,5 +5,7 @@
 # All rights reserved.
 # BSD License
 
+from . import entry
+
 __version_info__ = ('0', '8', '0')
 __version__ = '.'.join(__version_info__)

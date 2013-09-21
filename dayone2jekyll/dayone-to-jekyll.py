@@ -34,7 +34,6 @@ def main():
 
   fo.close()
 
-
 def process_entry(entry):
   firstline = entry[0].replace("Date:", "")
   print firstline
@@ -44,15 +43,12 @@ def process_entry(entry):
   print ds.strftime("%Y-%m-%d") # %H:%M:%S
   savefile("", "content")
 
-
 def build_filename_from_entry(entry):
   # Format: 2013-09-13-first-sentence-or-heading.md
   pass
 
-
 def savefile(filename, content):
   pass
-
 
 if __name__ == "__main__":
     main()
