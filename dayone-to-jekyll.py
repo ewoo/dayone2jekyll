@@ -23,7 +23,7 @@ def main():
       if count > 1:
         # Flush.
         e = Entry(entry)
-        e.print_headers()
+        #e.print_headers()
 
         # Reset.
         entry = []
@@ -46,7 +46,8 @@ class Entry:
 
     self.__parse_content()
     self.__reformat_headers()
-
+    self.__extract_title()
+    self.__build_filename()
 
   def __parse_content(self):
 
@@ -57,13 +58,13 @@ class Entry:
       if match:
         self.headers.append(line)
       else:
+        # print "Adding content"
         self.content.append(line)
 
   def __reformat_headers(self):
 
     cleaned_headers = []
     date_header = re.compile(r"date:")
-
 
     for line in self.headers:
       line = line.replace("\t", " ")
@@ -76,6 +77,37 @@ class Entry:
       cleaned_headers.append(line)
 
     self.headers = cleaned_headers
+
+  def __extract_title(self):
+    
+    lead_sentence = re.compile(r"^(\S.+?[.!?])(?=\s+|$)")
+    
+    for line in self.content:
+      match = lead_sentence.search(line)
+      if match:
+        self.title = match.group(1)
+        self.short_title = self.__smart_truncate(self.title)
+        break
+
+    print "------------"
+    print self.create_date
+    print self.title
+    print self.short_title
+
+  def __build_filename(self):
+
+    esc_shortitle = self.__smart_truncate(self.short_title, 20, "")
+
+    nonalpha = re.compile(r"[?\s\W_]+")
+    esc_shortitle = nonalpha.sub("", esc_shortitle)
+    print esc_shortitle
+
+
+  def __smart_truncate(self, content, length=100, suffix='...'):
+    if len(content) <= length:
+        return content
+    else:
+        return ' '.join(content[:length+1].split(' ')[0:-1]) + suffix
 
     # Massage headers. Remove beginning tabs and make lower case.
     #    for line in self.headers:
