@@ -3,7 +3,7 @@ import re
 from os.path import expanduser
 from dateutil import parser
 
-class Entry:
+class Entry(object):
   def __init__(self, raw_content):
     self.raw_content = raw_content
     self.headers = []
