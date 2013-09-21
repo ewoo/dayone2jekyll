@@ -21,13 +21,14 @@ def main():
     if match:
       count = count + 1
       if count > 1:
-        #process_entry(entry)
+        # Flush.
         e = Entry(entry)
-        #e.print_headers()
+        e.print_headers()
 
-        # Init entry
+        # Reset.
         entry = []
-      entry.append(line)
+    entry.append(line)
+
   fo.close()
 
 
@@ -40,25 +41,54 @@ class Entry:
     self.title = ""
     self.short_title = ""
     self.file_name = ""
-    self.content = ""
+    self.content = []
     self.image = ""
+
     self.__parse_content()
+    self.__reformat_headers()
+
 
   def __parse_content(self):
-    firstline = self.raw_content[0]
-    self.create_date = parser.parse(firstline.replace("Date:", ""))
 
     header_format = re.compile("^\t\w+:\t")
+
     for line in self.raw_content:
-      print line
       match = header_format.search(line)
       if match:
         self.headers.append(line)
       else:
         self.content.append(line)
 
+  def __reformat_headers(self):
+
+    cleaned_headers = []
+    date_header = re.compile(r"date:")
+
+
+    for line in self.headers:
+      line = line.replace("\t", " ")
+      line = re.sub(r"^\s(\w+:)", lambda h: h.group(1).lower(), line)
+
+      if date_header.search(line):
+        self.create_date = parser.parse(line.replace("date:",""))
+        line = "date: %s" % self.create_date.strftime("%Y-%m-%d %H:%M:%S")
+
+      cleaned_headers.append(line)
+
+    self.headers = cleaned_headers
+
     # Massage headers. Remove beginning tabs and make lower case.
     #    for line in self.headers:
+
+  def save(self, path):
+    fw = open(os.path.join(path, self.file_name), "w")
+    # Write headers in Front Matter format.
+    fw.writeline("---")
+    fw.writelines(self.headers)
+    fw.writeline("---")
+    # Wrtie blog post content.
+    fw.writelines(self.content)
+    fw.close()
 
   def print_headers(self):
     for line in self.headers:
