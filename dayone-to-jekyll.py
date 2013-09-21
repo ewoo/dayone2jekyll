@@ -96,11 +96,13 @@ class Entry:
 
   def __build_filename(self):
 
-    esc_shortitle = self.__smart_truncate(self.short_title, 20, "")
+    esc_shortitle = self.__smart_truncate(self.short_title, 50, "")
 
-    nonalpha = re.compile(r"[?\s\W_]+")
+    nonalpha = re.compile(r"(?:[^a-zA-Z0-9\- ]|(?<=['\"])s)")
     esc_shortitle = nonalpha.sub("", esc_shortitle)
-    print esc_shortitle
+    esc_shortitle = esc_shortitle.replace(" ", "-")
+    self.file_name = self.create_date.strftime("%Y-%m-%d") + "-" + esc_shortitle + ".md"
+    print self.file_name
 
 
   def __smart_truncate(self, content, length=100, suffix='...'):
