@@ -1,7 +1,7 @@
-*.sublime-project
 *.sublime-workspace
-*.markdown
-entries.md
+*.sublime-project
+*.srt
+*.smi
 
 *.py[cod]
 
